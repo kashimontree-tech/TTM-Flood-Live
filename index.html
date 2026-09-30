@@ -4,260 +4,189 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#071b2c">
-<title>TTM FLOOD LIVE — Thailand</title>
+<title>TTM FLOOD LIVE — Thailand Real-Time</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
 <style>
-:root{--bg:#07111f;--panel:#0d2337;--line:#214f6d;--text:#eef8ff;--muted:#a5cada;--green:#22c55e;--yellow:#facc15;--orange:#f97316;--red:#ef4444;--purple:#a855f7;--gray:#64748b}
-*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#07111f,#0a1e31);color:var(--text);font-family:system-ui,-apple-system,"Noto Sans Thai",sans-serif}a{color:#8dd7ff}
-header{position:sticky;top:0;z-index:20;padding:13px 16px;background:#07233aee;backdrop-filter:blur(10px);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;align-items:center}h1{font-size:20px;margin:0}.sub,.muted{color:var(--muted);font-size:12px;line-height:1.5}
-.wrap{max-width:1280px;margin:auto;padding:12px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px}.grid{display:grid;grid-template-columns:1.25fr .75fr;gap:10px}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}.card{background:#102a40;border:1px solid #265676;border-radius:13px;padding:10px}.card small{display:block;color:var(--muted)}.card b{font-size:19px}
-.badge{display:inline-block;border-radius:999px;padding:4px 9px;font-size:11px;font-weight:900}.live{background:#0b6b43}.delay{background:#7a5710}.stale{background:#7f1d1d}
-.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}.btn{border:0;border-radius:10px;padding:10px 12px;background:#12618a;color:white;text-decoration:none;font-weight:800;font-size:12px}.btn.alt{background:#1f3b51}.select{background:#102840;color:white;border:1px solid #2c6080;border-radius:10px;padding:10px 12px;min-width:220px}
-#thaiMap{height:690px;border-radius:16px;overflow:hidden;border:1px solid var(--line);background:#06131f}.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;margin:10px 0}.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px}
-.infoBig{font-size:28px;font-weight:900;margin:6px 0}.infoTitle{font-size:18px;font-weight:900}.list{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.pill{background:#102840;border:1px solid #2b6183;border-radius:12px;padding:10px;font-size:12px}.pill b{display:block;font-size:14px}
-.stationGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.station{background:#102840;border:1px solid #2b6183;border-radius:12px;padding:10px}.station b{display:block;font-size:18px;margin-top:3px}
-.notice{margin-top:10px;background:#34270f;border:1px solid #6b5524;color:#ffe1a3;border-radius:12px;padding:10px;font-size:12px}.error{display:none;margin-top:10px;background:#451b1b;border:1px solid #803535;color:#ffc9c9;border-radius:12px;padding:10px}
-.modal{position:fixed;inset:0;display:none;align-items:flex-end;justify-content:center;background:#0009;padding:14px;z-index:1000}.modal.open{display:flex}.modalCard{width:min(760px,100%);background:#0d2235;border:1px solid #3a6f8e;border-radius:20px;padding:16px}.modalHead{display:flex;justify-content:space-between;gap:10px}.closeBtn{border:0;background:#1f3b51;color:#fff;width:40px;height:40px;border-radius:999px;font-size:22px}.footer{text-align:center;color:#7598ad;padding:20px;font-size:11px}
-@media(max-width:860px){.grid{grid-template-columns:1fr}.cards{grid-template-columns:1fr 1fr}.stationGrid{grid-template-columns:1fr 1fr}.list{grid-template-columns:1fr}#thaiMap{height:600px}}
+:root{--bg:#07111f;--panel:#0d2337;--line:#214f6d;--text:#eef8ff;--muted:#a7c9da;--normal:#22c55e;--watch:#facc15;--warn:#f97316;--critical:#ef4444;--over:#a855f7;--nodata:#475569}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#07111f,#0a1e31);color:var(--text);font-family:system-ui,-apple-system,"Noto Sans Thai",sans-serif}
+header{position:sticky;top:0;z-index:999;padding:12px 15px;background:#07233af2;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;align-items:center}h1{font-size:19px;margin:0}.sub{font-size:12px;color:var(--muted);line-height:1.45}
+.wrap{max-width:1320px;margin:auto;padding:11px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:13px}.topgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.select{flex:1;min-width:240px;background:#102840;color:white;border:1px solid #2b6183;border-radius:11px;padding:11px 12px;font-size:15px}.btn{background:#12618a;color:white;border:0;border-radius:10px;padding:10px 12px;text-decoration:none;font-size:12px;font-weight:800}.btn.alt{background:#1d3b51}
+#map{height:680px;border-radius:16px;border:1px solid var(--line);background:#06131f;margin-top:10px}.leaflet-container{background:#06131f}.leaflet-control-zoom a{background:#102840!important;color:white!important;border-color:#315c79!important}.leaflet-control-attribution{background:#071b2ccc!important;color:#9ec7da!important}
+.legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;font-size:12px}.legend span{display:flex;align-items:center;gap:4px}.dot{width:11px;height:11px;border-radius:50%;display:inline-block}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.card{background:#102840;border:1px solid #2a5a79;border-radius:12px;padding:10px}.card small{display:block;color:var(--muted)}.card b{font-size:18px}.badge{display:inline-block;padding:4px 9px;border-radius:999px;font-size:11px;font-weight:900}.live{background:#0b6b43}.delay{background:#76570c}.stale{background:#7f1d1d}
+.infoTitle{font-size:18px;font-weight:900}.infoBig{font-size:29px;font-weight:900;margin:5px 0}.metric{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}.metric div{background:#102840;border:1px solid #2a5a79;border-radius:11px;padding:9px;font-size:12px}.metric b{display:block;font-size:15px}.muted{color:var(--muted);font-size:12px;line-height:1.5}.notice{margin-top:10px;background:#34270f;border:1px solid #6b5524;color:#ffe1a3;border-radius:11px;padding:9px;font-size:12px}
+.sourceLine{margin-top:8px;font-size:11px;color:#8eb6ca}.sourceLine a{color:#82d7ff}.error{display:none;background:#4a1e1e;color:#ffd0d0;border:1px solid #7f3b3b;border-radius:11px;padding:10px;margin-top:10px}
+.modal{position:fixed;inset:0;background:#0008;z-index:3000;display:none;align-items:flex-end;justify-content:center;padding:14px}.modal.open{display:flex}.modalCard{width:min(760px,100%);background:#0d2235;border:1px solid #3d6f8c;border-radius:20px;padding:16px}.modalHead{display:flex;justify-content:space-between;gap:10px}.close{width:40px;height:40px;border:0;border-radius:50%;background:#1c4058;color:white;font-size:22px}
+.footer{text-align:center;color:#7196aa;font-size:11px;padding:18px}
+@media(max-width:850px){.topgrid{grid-template-columns:1fr}.cards{grid-template-columns:1fr 1fr}#map{height:600px}.metric{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <header>
-<div><h1>TTM FLOOD LIVE <span id="freshBadge" class="badge stale">LOADING</span></h1><div class="sub">แผนที่ประเทศไทยรายจังหวัด • Art TTM</div></div>
-<div style="text-align:right"><div id="clock" class="sub"></div><div id="age" class="sub"></div></div>
+<div>
+<h1>TTM FLOOD LIVE <span id="freshBadge" class="badge stale">กำลังโหลด</span></h1>
+<div class="sub">แผนที่ประเทศไทย 77 จังหวัด • ThaiWater Real-Time • Art TTM</div>
+</div>
+<div style="text-align:right">
+<div id="clock" class="sub"></div>
+<div id="age" class="sub"></div>
+</div>
 </header>
 
 <div class="wrap">
 <div class="panel">
-<div class="infoTitle">ภาพรวมสถานการณ์น้ำประเทศไทย</div>
-<div class="sub">แตะจังหวัดบนแผนที่เพื่อดูสถานะ สีเตือน ค่าระดับน้ำ/อัตราการไหลที่มีข้อมูลรองรับ และเวลาต้นทาง</div>
-<div id="summary" class="cards"></div>
-<div class="legend">
-<span><i class="dot" style="background:var(--green)"></i>ปกติ</span>
-<span><i class="dot" style="background:var(--yellow)"></i>เฝ้าระวัง</span>
-<span><i class="dot" style="background:var(--orange)"></i>น้ำมาก</span>
-<span><i class="dot" style="background:var(--red)"></i>เสี่ยงสูง</span>
-<span><i class="dot" style="background:var(--purple)"></i>วิกฤต</span>
-<span><i class="dot" style="background:var(--gray)"></i>ยังไม่มีข้อมูลตรง</span>
-</div>
-<div class="notice"><b>ความถูกต้องของข้อมูล:</b> เว็บจะไม่เดาระดับน้ำของจังหวัดที่ไม่มีสถานีต้นทางในชุดข้อมูล หากไม่มีข้อมูลตรง จังหวัดนั้นจะแสดงสีเทา “ยังไม่มีข้อมูลตรง” แทนการสร้างตัวเลขขึ้นเอง</div>
-</div>
-
-<div class="grid" style="margin-top:10px">
-<div class="panel">
 <div class="toolbar">
-<select id="provinceSelect" class="select"><option value="">เลือกจังหวัด...</option></select>
-<a class="btn" href="https://hyd-app.rid.go.th/SVG/flow_diagram.html?svg=hydro5_636674419028767130" target="_blank" rel="noopener">ผังน้ำ Real-Time RID</a>
-<a class="btn alt" id="reportLink" href="#" target="_blank" rel="noopener">รายงานทางการล่าสุด</a>
+<select id="provinceSelect" class="select"><option>กำลังโหลด 77 จังหวัด...</option></select>
+<button id="refreshBtn" class="btn">อัปเดต Real-Time</button>
+<a class="btn alt" href="https://www.thaiwater.net/water/wl" target="_blank" rel="noopener">เปิด ThaiWater</a>
+<a class="btn alt" href="https://hyd-app.rid.go.th/SVG/flow_diagram.html?svg=hydro5_636674419028767130" target="_blank" rel="noopener">RID Real-Time</a>
 </div>
-<div id="thaiMap"></div>
-<div id="mapError" class="error">โหลดแผนที่ประเทศไทยไม่สำเร็จ กรุณารีเฟรชหน้าเว็บอีกครั้ง</div>
+<div class="legend">
+<span><i class="dot" style="background:var(--normal)"></i>ปกติ</span>
+<span><i class="dot" style="background:var(--watch)"></i>เฝ้าระวัง</span>
+<span><i class="dot" style="background:var(--warn)"></i>น้ำมาก</span>
+<span><i class="dot" style="background:var(--critical)"></i>เสี่ยงสูง</span>
+<span><i class="dot" style="background:var(--over)"></i>วิกฤต/ล้นตลิ่ง</span>
+<span><i class="dot" style="background:var(--nodata)"></i>ไม่มีสถานีตรง</span>
+</div>
+<div id="map"></div>
+<div id="mapError" class="error"></div>
 </div>
 
+<div class="topgrid" style="margin-top:10px">
 <div class="panel">
-<div class="infoTitle">รายละเอียดจังหวัด</div>
-<div id="provinceInfo" class="muted" style="margin-top:8px">เลือกจังหวัดบนแผนที่</div>
-<div class="list">
-<div class="pill"><b>เวลาข้อมูลต้นทาง</b><span id="measured">—</span></div>
-<div class="pill"><b>แหล่งข้อมูล</b><span id="sourceName">—</span></div>
-<div class="pill"><b>รีเฟรชหน้าเว็บ</b><span>ทุก 5 นาที</span></div>
-<div class="pill"><b>หลักการ</b><span>ใช้ค่าจริงเมื่อมี / ไม่สร้างข้อมูลแทน</span></div>
+<div class="infoTitle">จังหวัดที่เลือก</div>
+<div id="provinceInfo" class="muted" style="margin-top:7px">เลือกจังหวัดจากช่องด้านบนหรือแตะบนแผนที่</div>
 </div>
-<div class="notice">กรมชลประทานมี “ผังน้ำเพื่อการจัดการ (Real Time)” แยกต่างหาก ปุ่มด้านบนจะเปิดข้อมูลสดจากต้นทางโดยตรง</div>
+<div class="panel">
+<div class="infoTitle">ภาพรวมข้อมูลสด</div>
+<div id="summary" class="cards" style="margin-top:10px"></div>
+<div class="notice">สีจังหวัดคำนวณจากสถานีที่มีระดับสถานการณ์สูงสุดในจังหวัดนั้น ณ เวลาข้อมูลต้นทาง โดยระดับ 5/ข้อความ “ล้นตลิ่ง” จะแสดงสีม่วง</div>
 </div>
-</div>
-
-<div class="panel" style="margin-top:10px">
-<div class="infoTitle">สถานีหลักที่ Art TTM ติดตาม</div>
-<div id="stations" class="stationGrid" style="margin-top:10px"></div>
 </div>
 </div>
 
 <div id="modal" class="modal">
 <div class="modalCard">
-<div class="modalHead"><div><div id="modalTitle" class="infoTitle">จังหวัด</div><div id="modalBig" class="infoBig">—</div></div><button id="closeModal" class="closeBtn">×</button></div>
-<div id="modalMeta" class="muted"></div>
+<div class="modalHead"><div><div id="modalTitle" class="infoTitle"></div><div id="modalBig" class="infoBig"></div></div><button id="closeModal" class="close">×</button></div>
+<div id="modalBody"></div>
 </div>
 </div>
+
 <div class="footer">TTM HOME DESIGN & BUILD-IN CO., LTD. • Flood Monitoring by Art TTM</div>
 
-<script src="https://code.highcharts.com/maps/highmaps.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-const fallback={
- measured_at:"2026-09-30T08:00:00+07:00",
- source_name:"กรมชลประทาน (Royal Irrigation Department)",
- source_url:"https://www.rid.go.th/th/water-situation/28926",
- stations:{
-  c2:{name:"C.2 นครสวรรค์",value:2026,unit:"m³/s",state:"น้ำมาก",note:"อัตราการไหล"},
-  c13:{name:"C.13 เขื่อนเจ้าพระยา จ.ชัยนาท",value:2200,unit:"m³/s",state:"เสี่ยงสูง",note:"เหนือเขื่อน +17.69 ม.รทก. • ท้ายเขื่อน +15.22 ม.รทก."},
-  c29:{name:"C.29 บางไทร อยุธยา",value:2071,unit:"m³/s",state:"เสี่ยงสูง",note:"อัตราการไหล"},
-  pasak:{name:"เขื่อนป่าสักชลสิทธิ์",value:115,unit:"m³/s",state:"เฝ้าระวัง",note:"ปริมาณระบาย"},
-  rama6:{name:"เขื่อนพระรามหก",value:587,unit:"m³/s",state:"เฝ้าระวัง",note:"ปริมาณระบาย"}
- },
- provinces:{
-  "nakhon-sawan":{state:"น้ำมาก",level:"C.2 = 2,026 m³/s",note:"สถานี C.2 อ.เมือง จ.นครสวรรค์"},
-  "chai-nat":{state:"เสี่ยงสูง",level:"C.13 = 2,200 m³/s • +17.69 ม.รทก.",note:"เขื่อนเจ้าพระยา"},
-  "sing-buri":{state:"น้ำมาก",level:"ติดตามท้ายเขื่อนเจ้าพระยา",note:"ยังไม่มีค่าระดับรายจังหวัดโดยตรงในชุดนี้"},
-  "ang-thong":{state:"น้ำมาก",level:"ติดตามท้ายเขื่อนเจ้าพระยา",note:"ยังไม่มีค่าระดับรายจังหวัดโดยตรงในชุดนี้"},
-  "phra-nakhon-si-ayutthaya":{state:"เสี่ยงสูง",level:"C.29 = 2,071 m³/s",note:"สถานีบางไทร"},
-  "pathum-thani":{state:"เฝ้าระวัง",level:"ติดตามเจ้าพระยาตอนล่าง",note:"ยังไม่มีค่าระดับรายจังหวัดโดยตรงในชุดนี้"},
-  "nonthaburi":{state:"เฝ้าระวัง",level:"ติดตามเจ้าพระยาตอนล่าง",note:"ยังไม่มีค่าระดับรายจังหวัดโดยตรงในชุดนี้"},
-  "bangkok":{state:"เฝ้าระวัง",level:"ติดตามเจ้าพระยา + น้ำทะเลหนุน",note:"ใช้ต้นทางกรุงเทพฯ/ThaiWater ประกอบ"},
-  "saraburi":{state:"เฝ้าระวัง",level:"พระรามหก 587 • ป่าสัก 115 m³/s",note:"อ้างอิงการระบายเขื่อนสำคัญ"},
-  "lop-buri":{state:"เฝ้าระวัง",level:"ติดตามแนวลพบุรี–เจ้าพระยา",note:"ยังไม่มีค่าระดับรายจังหวัดโดยตรงในชุดนี้"}
- }
-};
-let DATA=fallback,chart=null;
+const API="https://api-v3.thaiwater.net/api/v1/thaiwater30/public/waterlevel_load";
+const COLORS={0:"#475569",1:"#22c55e",2:"#facc15",3:"#f97316",4:"#ef4444",5:"#a855f7"};
+const LABELS={0:"ไม่มีสถานีตรง",1:"ปกติ",2:"เฝ้าระวัง",3:"น้ำมาก",4:"เสี่ยงสูง",5:"วิกฤต/ล้นตลิ่ง"};
+let GEO=null,LIVE={provinces:{},source_updated_at:""},map=null,geoLayer=null,layersByThai={},selectedThai="";
 
-const TH_PROVINCES=[
-["bangkok","กรุงเทพมหานคร","Bangkok Metropolis"],
-["krabi","กระบี่","Krabi"],
-["kanchanaburi","กาญจนบุรี","Kanchanaburi"],
-["kalasin","กาฬสินธุ์","Kalasin"],
-["kamphaeng-phet","กำแพงเพชร","Kamphaeng Phet"],
-["khon-kaen","ขอนแก่น","Khon Kaen"],
-["chanthaburi","จันทบุรี","Chanthaburi"],
-["chachoengsao","ฉะเชิงเทรา","Chachoengsao"],
-["chon-buri","ชลบุรี","Chon Buri"],
-["chai-nat","ชัยนาท","Chai Nat"],
-["chaiyaphum","ชัยภูมิ","Chaiyaphum"],
-["chumphon","ชุมพร","Chumphon"],
-["chiang-rai","เชียงราย","Chiang Rai"],
-["chiang-mai","เชียงใหม่","Chiang Mai"],
-["trang","ตรัง","Trang"],
-["trat","ตราด","Trat"],
-["tak","ตาก","Tak"],
-["nakhon-nayok","นครนายก","Nakhon Nayok"],
-["nakhon-pathom","นครปฐม","Nakhon Pathom"],
-["nakhon-phanom","นครพนม","Nakhon Phanom"],
-["nakhon-ratchasima","นครราชสีมา","Nakhon Ratchasima"],
-["nakhon-si-thammarat","นครศรีธรรมราช","Nakhon Si Thammarat"],
-["nakhon-sawan","นครสวรรค์","Nakhon Sawan"],
-["nonthaburi","นนทบุรี","Nonthaburi"],
-["narathiwat","นราธิวาส","Narathiwat"],
-["nan","น่าน","Nan"],
-["bueng-kan","บึงกาฬ","Bueng Kan"],
-["buri-ram","บุรีรัมย์","Buri Ram"],
-["pathum-thani","ปทุมธานี","Pathum Thani"],
-["prachuap-khiri-khan","ประจวบคีรีขันธ์","Prachuap Khiri Khan"],
-["prachin-buri","ปราจีนบุรี","Prachin Buri"],
-["pattani","ปัตตานี","Pattani"],
-["phra-nakhon-si-ayutthaya","พระนครศรีอยุธยา","Phra Nakhon Si Ayutthaya"],
-["phayao","พะเยา","Phayao"],
-["phang-nga","พังงา","Phang Nga"],
-["phatthalung","พัทลุง","Phatthalung"],
-["phichit","พิจิตร","Phichit"],
-["phitsanulok","พิษณุโลก","Phitsanulok"],
-["phetchaburi","เพชรบุรี","Phetchaburi"],
-["phetchabun","เพชรบูรณ์","Phetchabun"],
-["phrae","แพร่","Phrae"],
-["phuket","ภูเก็ต","Phuket"],
-["maha-sarakham","มหาสารคาม","Maha Sarakham"],
-["mukdahan","มุกดาหาร","Mukdahan"],
-["mae-hong-son","แม่ฮ่องสอน","Mae Hong Son"],
-["yasothon","ยโสธร","Yasothon"],
-["yala","ยะลา","Yala"],
-["roi-et","ร้อยเอ็ด","Roi Et"],
-["ranong","ระนอง","Ranong"],
-["rayong","ระยอง","Rayong"],
-["ratchaburi","ราชบุรี","Ratchaburi"],
-["lop-buri","ลพบุรี","Lop Buri"],
-["lampang","ลำปาง","Lampang"],
-["lamphun","ลำพูน","Lamphun"],
-["loei","เลย","Loei"],
-["si-sa-ket","ศรีสะเกษ","Si Sa Ket"],
-["sakon-nakhon","สกลนคร","Sakon Nakhon"],
-["songkhla","สงขลา","Songkhla"],
-["satun","สตูล","Satun"],
-["samut-prakan","สมุทรปราการ","Samut Prakan"],
-["samut-songkhram","สมุทรสงคราม","Samut Songkhram"],
-["samut-sakhon","สมุทรสาคร","Samut Sakhon"],
-["sa-kaeo","สระแก้ว","Sa Kaeo"],
-["saraburi","สระบุรี","Saraburi"],
-["sing-buri","สิงห์บุรี","Sing Buri"],
-["sukhothai","สุโขทัย","Sukhothai"],
-["suphan-buri","สุพรรณบุรี","Suphan Buri"],
-["surat-thani","สุราษฎร์ธานี","Surat Thani"],
-["surin","สุรินทร์","Surin"],
-["nong-khai","หนองคาย","Nong Khai"],
-["nong-bua-lam-phu","หนองบัวลำภู","Nong Bua Lam Phu"],
-["ang-thong","อ่างทอง","Ang Thong"],
-["amnat-charoen","อำนาจเจริญ","Amnat Charoen"],
-["udon-thani","อุดรธานี","Udon Thani"],
-["uttaradit","อุตรดิตถ์","Uttaradit"],
-["uthai-thani","อุทัยธานี","Uthai Thani"],
-["ubon-ratchathani","อุบลราชธานี","Ubon Ratchathani"]
-];
-const TH_BY_SLUG=Object.fromEntries(TH_PROVINCES.map(p=>[p[0],p]));
-function canonicalSlug(s){
- let x=slug(s);
- const aliases={"bangkok-metropolis":"bangkok","buriram":"buri-ram","sisaket":"si-sa-ket","srisaket":"si-sa-ket","sa-kaeo-province":"sa-kaeo","phra-nakhon-sri-ayutthaya":"phra-nakhon-si-ayutthaya"};
- return aliases[x]||x;
-}
-function thaiName(nameOrSlug){
- const x=canonicalSlug(nameOrSlug),p=TH_BY_SLUG[x];
- return p?p[1]:nameOrSlug;
-}
-function fillProvinceSelect(){
- const sel=document.getElementById("provinceSelect");
- sel.innerHTML='<option value="">เลือกจังหวัดทั่วประเทศ (77 จังหวัด)...</option>';
- TH_PROVINCES.slice().sort((a,b)=>a[1].localeCompare(b[1],"th")).forEach(p=>{
-  const o=document.createElement("option");o.value=p[0];o.textContent=p[1];sel.appendChild(o);
- });
-}
+function clock(){document.getElementById("clock").textContent=new Date().toLocaleString("th-TH",{dateStyle:"medium",timeStyle:"medium"})}
+clock();setInterval(clock,1000);
 
-function slug(s){return String(s||"").toLowerCase().replace(/province/g,"").replace(/phra nakhon sri/g,"phra nakhon si").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}
-function meta(state){
- if(state==="ปกติ")return{v:1,c:"#22c55e"};
- if(state==="เฝ้าระวัง")return{v:2,c:"#facc15"};
- if(state==="น้ำมาก")return{v:3,c:"#f97316"};
- if(state==="เสี่ยงสูง")return{v:4,c:"#ef4444"};
- if(state==="วิกฤต")return{v:5,c:"#a855f7"};
- return{v:0,c:"#64748b"};
+function th(obj,key){const v=(obj||{})[key];return v&&typeof v==="object"?(v.th||v.en||""):(v||"")}
+function statusOf(r){
+ const txt=String(r.diff_wl_bank_text||"");
+ if(txt.startsWith("ล้นตลิ่ง"))return 5;
+ const n=parseInt(r.situation_level||0,10);return Number.isFinite(n)?n:0;
 }
-function info(name){return (DATA.provinces||{})[canonicalSlug(name)]||{state:"ยังไม่มีข้อมูลตรง",level:"ยังไม่มีค่าระดับน้ำรายจังหวัดจากชุดข้อมูลต้นทาง",note:"รอเชื่อมสถานี/ฟีดทางการของจังหวัด"}}
-function measuredText(){return new Date(DATA.measured_at).toLocaleString("th-TH",{dateStyle:"medium",timeStyle:"short"})}
-function freshness(){
- const h=(Date.now()-new Date(DATA.measured_at))/36e5,b=document.getElementById("freshBadge");
- b.className="badge "+(h<=1.5?"live":h<=6?"delay":"stale");b.textContent=h<=1.5?"LIVE":h<=6?"DELAYED":"STALE";
- document.getElementById("age").textContent="อายุข้อมูล ~ "+Math.max(0,h).toFixed(1)+" ชม.";
- document.getElementById("measured").textContent=measuredText();document.getElementById("sourceName").textContent=DATA.source_name;
- document.getElementById("reportLink").href=DATA.source_url;
-}
-function renderCards(){
- const s=DATA.stations, rows=[s.c2,s.c13,s.c29,s.pasak];
- document.getElementById("summary").innerHTML=rows.map(x=>'<div class="card"><small>'+x.name+'</small><b>'+Number(x.value).toLocaleString("th-TH")+' '+x.unit+'</b><small>'+x.state+'</small></div>').join("");
- document.getElementById("stations").innerHTML=Object.values(s).map(x=>'<div class="station"><small>'+x.name+'</small><b>'+Number(x.value).toLocaleString("th-TH")+' '+x.unit+'</b><small>'+x.note+'</small></div>').join("");
-}
-function showProvince(name,open){
- const x=info(name),m=meta(x.state),html='<div class="infoTitle">'+name+'</div><div class="infoBig" style="color:'+m.c+'">'+x.level+'</div><div><span class="badge" style="background:'+m.c+'">'+x.state+'</span></div><div class="muted" style="margin-top:8px">'+x.note+'</div><div class="muted" style="margin-top:8px">เวลาต้นทาง: '+measuredText()+'</div>';
- document.getElementById("provinceInfo").innerHTML=html;
- if(open){document.getElementById("modalTitle").textContent=displayName;document.getElementById("modalBig").textContent=x.level;document.getElementById("modalBig").style.color=m.c;document.getElementById("modalMeta").innerHTML='สถานะ: <b>'+x.state+'</b><br>'+x.note+'<br>เวลาต้นทาง: '+measuredText();document.getElementById("modal").classList.add("open")}
-}
-async function renderMap(){
- try{
-  const topo=await fetch("https://code.highcharts.com/mapdata/countries/th/th-all.topo.json").then(r=>r.json());
-  const md=Highcharts.geojson(topo);
-  const data=md.map(a=>{const x=info(a.name),m=meta(x.state);return{name:a.name,value:m.v,color:m.c,custom:x,provinceSlug:canonicalSlug(a.name)}});
-  chart=Highcharts.mapChart("thaiMap",{chart:{map:md,backgroundColor:"transparent"},title:{text:""},credits:{enabled:false},mapNavigation:{enabled:true,buttonOptions:{verticalAlign:"bottom"}},legend:{enabled:false},tooltip:{useHTML:true,formatter:function(){return "<b>"+thaiName(this.point.name)+"</b><br>"+this.point.custom.state+"<br>"+this.point.custom.level}},plotOptions:{map:{allAreas:true,allowPointSelect:true,nullColor:"#64748b",borderColor:"#173b50",states:{hover:{color:"#58c8ff"},select:{color:"#ffffff",borderColor:"#58c8ff",borderWidth:2}},point:{events:{click:function(){showProvince(this.name,true);document.getElementById("provinceSelect").value=canonicalSlug(this.name)}}}}},series:[{type:"map",mapData:md,data:data,joinBy:"name"}]});
-  fillProvinceSelect();
- }catch(e){document.getElementById("mapError").style.display="block"}
-}
-document.getElementById("provinceSelect").addEventListener("change",e=>{
- const ps=e.target.value;if(!ps)return;
- const p=TH_BY_SLUG[ps]; const en=p?p[2]:ps;
- showProvince(ps,true);
- if(chart&&chart.series&&chart.series[0]){
-  const point=chart.series[0].points.find(pt=>canonicalSlug(pt.name)===ps);
-  if(point){chart.series[0].points.forEach(x=>x.select(false,false));point.select(true,false);}
+function aggregate(payload){
+ const rows=((payload.waterlevel_data||{}).data)||[];
+ const provinces={};let latest="";
+ for(const r of rows){
+  const p=th(r.geocode||{},"province_name");if(!p)continue;
+  const lv=statusOf(r),dt=String(r.waterlevel_datetime||"");if(dt>latest)latest=dt;
+  const st=r.station||{};
+  const rec={province:p,state:LABELS[lv],situation_level:lv,station_name:th(st,"tele_station_name"),station_code:st.tele_station_oldcode||"",waterlevel_msl:r.waterlevel_msl,waterlevel_m:r.waterlevel_m,discharge:r.discharge,datetime:dt,diff_wl_bank:r.diff_wl_bank,diff_wl_bank_text:r.diff_wl_bank_text||""};
+  const old=provinces[p];
+  if(!old||lv>old.situation_level||(lv===old.situation_level&&dt>old.datetime))provinces[p]=rec;
  }
-});
+ return{source:"ThaiWater",source_url:API,source_updated_at:latest,station_count:rows.length,province_count:Object.keys(provinces).length,provinces};
+}
+function ageStatus(){
+ const d=LIVE.source_updated_at?new Date(String(LIVE.source_updated_at).replace(" ","T")+"+07:00"):null;
+ const h=d&&!isNaN(d)?(Date.now()-d.getTime())/36e5:999;
+ const b=document.getElementById("freshBadge");
+ if(h<=1.5){b.className="badge live";b.textContent="LIVE"}
+ else if(h<=6){b.className="badge delay";b.textContent="DELAYED"}
+ else{b.className="badge stale";b.textContent="STALE"}
+ document.getElementById("age").textContent=LIVE.source_updated_at?"ต้นทาง "+LIVE.source_updated_at+" • "+Math.max(0,h).toFixed(1)+" ชม.":"ยังไม่มีเวลาต้นทาง";
+}
+function popupHtml(name){
+ const r=LIVE.provinces[name];if(!r)return "<b>"+name+"</b><br>ไม่มีสถานีน้ำตรงในชุดข้อมูลปัจจุบัน";
+ const wl=r.waterlevel_msl??r.waterlevel_m;
+ const bank=r.diff_wl_bank!=null?Number(r.diff_wl_bank).toFixed(2)+" ม.":"—";
+ const q=r.discharge!=null?Number(r.discharge).toLocaleString("th-TH")+" m³/s":"—";
+ return "<b>"+name+"</b><br>"+LABELS[r.situation_level]+"<br>"+(r.station_name||r.station_code||"")+"<br>ระดับน้ำ: "+(wl!=null?Number(wl).toFixed(2)+" ม.รทก.":"—")+"<br>อัตราการไหล: "+q+"<br>ต่างจากตลิ่ง: "+bank+"<br>"+(r.datetime||"");
+}
+function detailHtml(name){
+ const r=LIVE.provinces[name];
+ if(!r)return '<div class="infoBig" style="color:'+COLORS[0]+'">'+name+'</div><span class="badge" style="background:'+COLORS[0]+'">'+LABELS[0]+'</span><div class="muted" style="margin-top:8px">ThaiWater ยังไม่มีสถานีน้ำตรงสำหรับจังหวัดนี้ในชุดข้อมูลปัจจุบัน</div>';
+ const wl=r.waterlevel_msl??r.waterlevel_m;
+ const q=r.discharge!=null?Number(r.discharge).toLocaleString("th-TH")+" m³/s":"—";
+ const bank=r.diff_wl_bank!=null?Number(r.diff_wl_bank).toFixed(2)+" ม.":"—";
+ return '<div class="infoBig" style="color:'+COLORS[r.situation_level]+'">'+name+'</div><span class="badge" style="background:'+COLORS[r.situation_level]+'">'+LABELS[r.situation_level]+'</span><div class="metric"><div><b>'+(wl!=null?Number(wl).toFixed(2)+" ม.รทก.":"—")+'</b>ระดับน้ำ</div><div><b>'+q+'</b>อัตราการไหล</div><div><b>'+bank+'</b>ต่างจากตลิ่ง</div><div><b>'+(r.datetime||"—")+'</b>เวลาต้นทาง</div></div><div class="muted" style="margin-top:9px">สถานี: '+(r.station_name||r.station_code||"—")+'<br>'+(r.diff_wl_bank_text||"")+'</div><div class="sourceLine">แหล่งข้อมูล: <a href="https://www.thaiwater.net/water/wl" target="_blank" rel="noopener">ThaiWater</a></div>';
+}
+function selectProvince(name,openModal){
+ selectedThai=name;document.getElementById("provinceSelect").value=name;document.getElementById("provinceInfo").innerHTML=detailHtml(name);
+ const layer=layersByThai[name];if(layer&&map){map.fitBounds(layer.getBounds(),{padding:[25,25],maxZoom:8});layer.bringToFront();}
+ if(openModal){document.getElementById("modalTitle").textContent=name;document.getElementById("modalBig").textContent=(LIVE.provinces[name]||{}).state||LABELS[0];document.getElementById("modalBig").style.color=COLORS[(LIVE.provinces[name]||{}).situation_level||0];document.getElementById("modalBody").innerHTML=detailHtml(name);document.getElementById("modal").classList.add("open")}
+}
+function styleFeature(f){
+ const name=f.properties.ADM1_TH,r=LIVE.provinces[name],lv=r?r.situation_level:0;
+ return{color:"#0b2435",weight:1,fillColor:COLORS[lv],fillOpacity:.82};
+}
+function rebuildMap(){
+ if(!window.L){showError("ปลั๊กอิน Leaflet โหลดไม่สำเร็จ กรุณารีเฟรชหน้าเว็บ");return}
+ if(!map){map=L.map("map",{zoomControl:true,attributionControl:true,minZoom:4,maxZoom:10});map.setView([13.2,101.1],5)}
+ if(geoLayer)geoLayer.remove();layersByThai={};
+ geoLayer=L.geoJSON(GEO,{style:styleFeature,onEachFeature:(f,layer)=>{
+  const name=f.properties.ADM1_TH;layersByThai[name]=layer;
+  layer.bindTooltip(name,{sticky:true});
+  layer.bindPopup(()=>popupHtml(name));
+  layer.on("click",()=>selectProvince(name,false));
+ }}).addTo(map);
+ map.fitBounds(geoLayer.getBounds(),{padding:[8,8]});
+}
+function fillSelect(){
+ const arr=GEO.features.map(f=>f.properties.ADM1_TH).sort((a,b)=>a.localeCompare(b,"th"));
+ const s=document.getElementById("provinceSelect");s.innerHTML='<option value="">เลือกจังหวัดทั่วประเทศ (77 จังหวัด)...</option>';
+ for(const n of arr){const o=document.createElement("option");o.value=n;o.textContent=n;s.appendChild(o)}
+}
+function summary(){
+ const vals=Object.values(LIVE.provinces||{}),counts=[0,0,0,0,0,0];
+ vals.forEach(r=>counts[r.situation_level||0]++);
+ document.getElementById("summary").innerHTML=[
+  ["สถานีทั้งหมด",LIVE.station_count||0],
+  ["จังหวัดมีข้อมูล",LIVE.province_count||0],
+  ["เสี่ยงสูง/วิกฤต",counts[4]+counts[5]],
+  ["ล้นตลิ่ง/วิกฤต",counts[5]]
+ ].map(x=>'<div class="card"><small>'+x[0]+'</small><b>'+Number(x[1]).toLocaleString("th-TH")+'</b></div>').join("");
+}
+function showError(msg){const e=document.getElementById("mapError");e.style.display="block";e.textContent=msg}
+async function loadGeo(){
+ const r=await fetch("provinces.geojson?ts="+Date.now(),{cache:"no-store"});if(!r.ok)throw new Error("geo");GEO=await r.json();fillSelect();
+}
+async function loadFallback(){
+ try{const r=await fetch("live-water.json?ts="+Date.now(),{cache:"no-store"});if(r.ok){LIVE=await r.json();return true}}catch(e){}return false;
+}
+async function loadDirect(){
+ const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);
+ try{const r=await fetch(API,{cache:"no-store",headers:{Accept:"application/json"},signal:controller.signal});if(!r.ok)throw new Error("api");LIVE=aggregate(await r.json());return true}
+ catch(e){return false}finally{clearTimeout(timer)}
+}
+async function refreshAll(){
+ document.getElementById("freshBadge").textContent="กำลังอัปเดต";
+ await loadFallback();ageStatus();summary();if(GEO)rebuildMap();
+ const direct=await loadDirect();
+ if(direct){ageStatus();summary();if(GEO)rebuildMap();if(selectedThai)document.getElementById("provinceInfo").innerHTML=detailHtml(selectedThai)}
+}
+document.getElementById("provinceSelect").addEventListener("change",e=>{if(e.target.value)selectProvince(e.target.value,true)});
+document.getElementById("refreshBtn").addEventListener("click",refreshAll);
 document.getElementById("closeModal").addEventListener("click",()=>document.getElementById("modal").classList.remove("open"));
 document.getElementById("modal").addEventListener("click",e=>{if(e.target.id==="modal")e.currentTarget.classList.remove("open")});
-function clock(){document.getElementById("clock").textContent=new Date().toLocaleString("th-TH",{dateStyle:"medium",timeStyle:"medium"})}
-async function load(){
- try{const r=await fetch("data.json?ts="+Date.now(),{cache:"no-store"});if(r.ok)DATA=await r.json()}catch(e){DATA=fallback}
- freshness();renderCards();if(!chart)renderMap();
-}
-fillProvinceSelect();clock();setInterval(clock,1000);load();setInterval(load,300000);
+(async()=>{try{await loadGeo();await refreshAll()}catch(e){showError("โหลดแผนที่ 77 จังหวัดไม่สำเร็จ กรุณารีเฟรชหน้าเว็บ")}})();
+setInterval(refreshAll,300000);
 </script>
 </body></html>
