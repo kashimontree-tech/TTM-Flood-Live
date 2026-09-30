@@ -108,6 +108,103 @@ const fallback={
 };
 let DATA=fallback,chart=null;
 
+const TH_PROVINCES=[
+["bangkok","กรุงเทพมหานคร","Bangkok Metropolis"],
+["krabi","กระบี่","Krabi"],
+["kanchanaburi","กาญจนบุรี","Kanchanaburi"],
+["kalasin","กาฬสินธุ์","Kalasin"],
+["kamphaeng-phet","กำแพงเพชร","Kamphaeng Phet"],
+["khon-kaen","ขอนแก่น","Khon Kaen"],
+["chanthaburi","จันทบุรี","Chanthaburi"],
+["chachoengsao","ฉะเชิงเทรา","Chachoengsao"],
+["chon-buri","ชลบุรี","Chon Buri"],
+["chai-nat","ชัยนาท","Chai Nat"],
+["chaiyaphum","ชัยภูมิ","Chaiyaphum"],
+["chumphon","ชุมพร","Chumphon"],
+["chiang-rai","เชียงราย","Chiang Rai"],
+["chiang-mai","เชียงใหม่","Chiang Mai"],
+["trang","ตรัง","Trang"],
+["trat","ตราด","Trat"],
+["tak","ตาก","Tak"],
+["nakhon-nayok","นครนายก","Nakhon Nayok"],
+["nakhon-pathom","นครปฐม","Nakhon Pathom"],
+["nakhon-phanom","นครพนม","Nakhon Phanom"],
+["nakhon-ratchasima","นครราชสีมา","Nakhon Ratchasima"],
+["nakhon-si-thammarat","นครศรีธรรมราช","Nakhon Si Thammarat"],
+["nakhon-sawan","นครสวรรค์","Nakhon Sawan"],
+["nonthaburi","นนทบุรี","Nonthaburi"],
+["narathiwat","นราธิวาส","Narathiwat"],
+["nan","น่าน","Nan"],
+["bueng-kan","บึงกาฬ","Bueng Kan"],
+["buri-ram","บุรีรัมย์","Buri Ram"],
+["pathum-thani","ปทุมธานี","Pathum Thani"],
+["prachuap-khiri-khan","ประจวบคีรีขันธ์","Prachuap Khiri Khan"],
+["prachin-buri","ปราจีนบุรี","Prachin Buri"],
+["pattani","ปัตตานี","Pattani"],
+["phra-nakhon-si-ayutthaya","พระนครศรีอยุธยา","Phra Nakhon Si Ayutthaya"],
+["phayao","พะเยา","Phayao"],
+["phang-nga","พังงา","Phang Nga"],
+["phatthalung","พัทลุง","Phatthalung"],
+["phichit","พิจิตร","Phichit"],
+["phitsanulok","พิษณุโลก","Phitsanulok"],
+["phetchaburi","เพชรบุรี","Phetchaburi"],
+["phetchabun","เพชรบูรณ์","Phetchabun"],
+["phrae","แพร่","Phrae"],
+["phuket","ภูเก็ต","Phuket"],
+["maha-sarakham","มหาสารคาม","Maha Sarakham"],
+["mukdahan","มุกดาหาร","Mukdahan"],
+["mae-hong-son","แม่ฮ่องสอน","Mae Hong Son"],
+["yasothon","ยโสธร","Yasothon"],
+["yala","ยะลา","Yala"],
+["roi-et","ร้อยเอ็ด","Roi Et"],
+["ranong","ระนอง","Ranong"],
+["rayong","ระยอง","Rayong"],
+["ratchaburi","ราชบุรี","Ratchaburi"],
+["lop-buri","ลพบุรี","Lop Buri"],
+["lampang","ลำปาง","Lampang"],
+["lamphun","ลำพูน","Lamphun"],
+["loei","เลย","Loei"],
+["si-sa-ket","ศรีสะเกษ","Si Sa Ket"],
+["sakon-nakhon","สกลนคร","Sakon Nakhon"],
+["songkhla","สงขลา","Songkhla"],
+["satun","สตูล","Satun"],
+["samut-prakan","สมุทรปราการ","Samut Prakan"],
+["samut-songkhram","สมุทรสงคราม","Samut Songkhram"],
+["samut-sakhon","สมุทรสาคร","Samut Sakhon"],
+["sa-kaeo","สระแก้ว","Sa Kaeo"],
+["saraburi","สระบุรี","Saraburi"],
+["sing-buri","สิงห์บุรี","Sing Buri"],
+["sukhothai","สุโขทัย","Sukhothai"],
+["suphan-buri","สุพรรณบุรี","Suphan Buri"],
+["surat-thani","สุราษฎร์ธานี","Surat Thani"],
+["surin","สุรินทร์","Surin"],
+["nong-khai","หนองคาย","Nong Khai"],
+["nong-bua-lam-phu","หนองบัวลำภู","Nong Bua Lam Phu"],
+["ang-thong","อ่างทอง","Ang Thong"],
+["amnat-charoen","อำนาจเจริญ","Amnat Charoen"],
+["udon-thani","อุดรธานี","Udon Thani"],
+["uttaradit","อุตรดิตถ์","Uttaradit"],
+["uthai-thani","อุทัยธานี","Uthai Thani"],
+["ubon-ratchathani","อุบลราชธานี","Ubon Ratchathani"]
+];
+const TH_BY_SLUG=Object.fromEntries(TH_PROVINCES.map(p=>[p[0],p]));
+function canonicalSlug(s){
+ let x=slug(s);
+ const aliases={"bangkok-metropolis":"bangkok","buriram":"buri-ram","sisaket":"si-sa-ket","srisaket":"si-sa-ket","sa-kaeo-province":"sa-kaeo","phra-nakhon-sri-ayutthaya":"phra-nakhon-si-ayutthaya"};
+ return aliases[x]||x;
+}
+function thaiName(nameOrSlug){
+ const x=canonicalSlug(nameOrSlug),p=TH_BY_SLUG[x];
+ return p?p[1]:nameOrSlug;
+}
+function fillProvinceSelect(){
+ const sel=document.getElementById("provinceSelect");
+ sel.innerHTML='<option value="">เลือกจังหวัดทั่วประเทศ (77 จังหวัด)...</option>';
+ TH_PROVINCES.slice().sort((a,b)=>a[1].localeCompare(b[1],"th")).forEach(p=>{
+  const o=document.createElement("option");o.value=p[0];o.textContent=p[1];sel.appendChild(o);
+ });
+}
+
 function slug(s){return String(s||"").toLowerCase().replace(/province/g,"").replace(/phra nakhon sri/g,"phra nakhon si").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}
 function meta(state){
  if(state==="ปกติ")return{v:1,c:"#22c55e"};
@@ -117,7 +214,7 @@ function meta(state){
  if(state==="วิกฤต")return{v:5,c:"#a855f7"};
  return{v:0,c:"#64748b"};
 }
-function info(name){return (DATA.provinces||{})[slug(name)]||{state:"ยังไม่มีข้อมูลตรง",level:"ยังไม่มีค่าระดับน้ำรายจังหวัดจากชุดข้อมูลต้นทาง",note:"รอเชื่อมสถานี/ฟีดทางการของจังหวัด"}}
+function info(name){return (DATA.provinces||{})[canonicalSlug(name)]||{state:"ยังไม่มีข้อมูลตรง",level:"ยังไม่มีค่าระดับน้ำรายจังหวัดจากชุดข้อมูลต้นทาง",note:"รอเชื่อมสถานี/ฟีดทางการของจังหวัด"}}
 function measuredText(){return new Date(DATA.measured_at).toLocaleString("th-TH",{dateStyle:"medium",timeStyle:"short"})}
 function freshness(){
  const h=(Date.now()-new Date(DATA.measured_at))/36e5,b=document.getElementById("freshBadge");
@@ -134,18 +231,26 @@ function renderCards(){
 function showProvince(name,open){
  const x=info(name),m=meta(x.state),html='<div class="infoTitle">'+name+'</div><div class="infoBig" style="color:'+m.c+'">'+x.level+'</div><div><span class="badge" style="background:'+m.c+'">'+x.state+'</span></div><div class="muted" style="margin-top:8px">'+x.note+'</div><div class="muted" style="margin-top:8px">เวลาต้นทาง: '+measuredText()+'</div>';
  document.getElementById("provinceInfo").innerHTML=html;
- if(open){document.getElementById("modalTitle").textContent=name;document.getElementById("modalBig").textContent=x.level;document.getElementById("modalBig").style.color=m.c;document.getElementById("modalMeta").innerHTML='สถานะ: <b>'+x.state+'</b><br>'+x.note+'<br>เวลาต้นทาง: '+measuredText();document.getElementById("modal").classList.add("open")}
+ if(open){document.getElementById("modalTitle").textContent=displayName;document.getElementById("modalBig").textContent=x.level;document.getElementById("modalBig").style.color=m.c;document.getElementById("modalMeta").innerHTML='สถานะ: <b>'+x.state+'</b><br>'+x.note+'<br>เวลาต้นทาง: '+measuredText();document.getElementById("modal").classList.add("open")}
 }
 async function renderMap(){
  try{
   const topo=await fetch("https://code.highcharts.com/mapdata/countries/th/th-all.topo.json").then(r=>r.json());
   const md=Highcharts.geojson(topo);
-  const data=md.map(a=>{const x=info(a.name),m=meta(x.state);return{name:a.name,value:m.v,color:m.c,custom:x}});
-  chart=Highcharts.mapChart("thaiMap",{chart:{map:md,backgroundColor:"transparent"},title:{text:""},credits:{enabled:false},mapNavigation:{enabled:true,buttonOptions:{verticalAlign:"bottom"}},legend:{enabled:false},tooltip:{useHTML:true,formatter:function(){return "<b>"+this.point.name+"</b><br>"+this.point.custom.state+"<br>"+this.point.custom.level}},plotOptions:{map:{allAreas:true,nullColor:"#64748b",borderColor:"#173b50",states:{hover:{color:"#58c8ff"}},point:{events:{click:function(){showProvince(this.name,true)}}}}},series:[{type:"map",mapData:md,data:data,joinBy:"name"}]});
-  const sel=document.getElementById("provinceSelect");sel.innerHTML='<option value="">เลือกจังหวัด...</option>';data.slice().sort((a,b)=>a.name.localeCompare(b.name)).forEach(p=>{const o=document.createElement("option");o.value=p.name;o.textContent=p.name;sel.appendChild(o)});
+  const data=md.map(a=>{const x=info(a.name),m=meta(x.state);return{name:a.name,value:m.v,color:m.c,custom:x,provinceSlug:canonicalSlug(a.name)}});
+  chart=Highcharts.mapChart("thaiMap",{chart:{map:md,backgroundColor:"transparent"},title:{text:""},credits:{enabled:false},mapNavigation:{enabled:true,buttonOptions:{verticalAlign:"bottom"}},legend:{enabled:false},tooltip:{useHTML:true,formatter:function(){return "<b>"+thaiName(this.point.name)+"</b><br>"+this.point.custom.state+"<br>"+this.point.custom.level}},plotOptions:{map:{allAreas:true,allowPointSelect:true,nullColor:"#64748b",borderColor:"#173b50",states:{hover:{color:"#58c8ff"},select:{color:"#ffffff",borderColor:"#58c8ff",borderWidth:2}},point:{events:{click:function(){showProvince(this.name,true);document.getElementById("provinceSelect").value=canonicalSlug(this.name)}}}}},series:[{type:"map",mapData:md,data:data,joinBy:"name"}]});
+  fillProvinceSelect();
  }catch(e){document.getElementById("mapError").style.display="block"}
 }
-document.getElementById("provinceSelect").addEventListener("change",e=>{if(e.target.value)showProvince(e.target.value,true)});
+document.getElementById("provinceSelect").addEventListener("change",e=>{
+ const ps=e.target.value;if(!ps)return;
+ const p=TH_BY_SLUG[ps]; const en=p?p[2]:ps;
+ showProvince(ps,true);
+ if(chart&&chart.series&&chart.series[0]){
+  const point=chart.series[0].points.find(pt=>canonicalSlug(pt.name)===ps);
+  if(point){chart.series[0].points.forEach(x=>x.select(false,false));point.select(true,false);}
+ }
+});
 document.getElementById("closeModal").addEventListener("click",()=>document.getElementById("modal").classList.remove("open"));
 document.getElementById("modal").addEventListener("click",e=>{if(e.target.id==="modal")e.currentTarget.classList.remove("open")});
 function clock(){document.getElementById("clock").textContent=new Date().toLocaleString("th-TH",{dateStyle:"medium",timeStyle:"medium"})}
@@ -153,6 +258,6 @@ async function load(){
  try{const r=await fetch("data.json?ts="+Date.now(),{cache:"no-store"});if(r.ok)DATA=await r.json()}catch(e){DATA=fallback}
  freshness();renderCards();if(!chart)renderMap();
 }
-clock();setInterval(clock,1000);load();setInterval(load,300000);
+fillProvinceSelect();clock();setInterval(clock,1000);load();setInterval(load,300000);
 </script>
 </body></html>
