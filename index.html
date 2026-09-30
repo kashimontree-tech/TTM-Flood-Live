@@ -102,16 +102,17 @@ function aggregate(payload){
   const old=provinces[p];
   if(!old||lv>old.situation_level||(lv===old.situation_level&&dt>old.datetime))provinces[p]=rec;
  }
- return{source:"ThaiWater",source_url:API,source_updated_at:latest,station_count:rows.length,province_count:Object.keys(provinces).length,provinces};
+ return{source:"ThaiWater",source_url:API,fetched_at:new Date().toISOString(),source_updated_at:latest,station_count:rows.length,province_count:Object.keys(provinces).length,provinces};
 }
 function ageStatus(){
- const d=LIVE.source_updated_at?new Date(String(LIVE.source_updated_at).replace(" ","T")+"+07:00"):null;
+ const d=LIVE.fetched_at?new Date(LIVE.fetched_at):null;
  const h=d&&!isNaN(d)?(Date.now()-d.getTime())/36e5:999;
  const b=document.getElementById("freshBadge");
- if(h<=1.5){b.className="badge live";b.textContent="LIVE"}
- else if(h<=6){b.className="badge delay";b.textContent="DELAYED"}
+ if(h<=0.5){b.className="badge live";b.textContent="LIVE"}
+ else if(h<=2){b.className="badge delay";b.textContent="DELAYED"}
  else{b.className="badge stale";b.textContent="STALE"}
- document.getElementById("age").textContent=LIVE.source_updated_at?"ต้นทาง "+LIVE.source_updated_at+" • "+Math.max(0,h).toFixed(1)+" ชม.":"ยังไม่มีเวลาต้นทาง";
+ const fetched=LIVE.fetched_at?new Date(LIVE.fetched_at).toLocaleString("th-TH",{dateStyle:"short",timeStyle:"short"}):"—";
+ document.getElementById("age").textContent="ดึงข้อมูลล่าสุด "+fetched;
 }
 function popupHtml(name){
  const r=LIVE.provinces[name];if(!r)return "<b>"+name+"</b><br>ไม่มีสถานีน้ำตรงในชุดข้อมูลปัจจุบัน";
