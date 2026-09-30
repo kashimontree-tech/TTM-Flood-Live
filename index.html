@@ -1,707 +1,122 @@
 <!doctype html>
-
 <html lang="th">
-
 <head>
-
 <meta charset="utf-8">
-
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-
-<meta name="theme-color" content="#08243a">
-
+<meta name="theme-color" content="#061927">
 <title>TTM FLOOD LIVE — Art TTM</title>
-
 <style>
-
-*{box-sizing:border-box}
-
-body{
-
-  margin:0;
-
-  background:#06121f;
-
-  color:#eef8ff;
-
-  font-family:system-ui,-apple-system,"Noto Sans Thai",sans-serif
-
-}
-
-header{
-
-  padding:14px 18px;
-
-  background:linear-gradient(135deg,#083451,#09638a);
-
-  display:flex;
-
-  justify-content:space-between;
-
-  align-items:center;
-
-  gap:10px
-
-}
-
-h1{margin:0;font-size:21px}
-
-.sub{font-size:12px;color:#b6dff2;margin-top:4px}
-
-.live{
-
-  display:inline-block;
-
-  background:#ef4444;
-
-  padding:4px 9px;
-
-  border-radius:20px;
-
-  font-size:11px
-
-}
-
-#clock{font-size:12px;text-align:right}
-
-.wrap{padding:12px;max-width:1200px;margin:auto}
-
-.summary{
-
-  display:grid;
-
-  grid-template-columns:repeat(4,1fr);
-
-  gap:8px;
-
-  margin-bottom:10px
-
-}
-
-.card{
-
-  background:#10263c;
-
-  border:1px solid #24577a;
-
-  border-radius:13px;
-
-  padding:10px
-
-}
-
-.card small{display:block;color:#9dc8df}
-
-.card b{font-size:18px}
-
-.map{
-
-  height:540px;
-
-  position:relative;
-
-  overflow:hidden;
-
-  border:1px solid #2c6288;
-
-  border-radius:18px;
-
-  background:
-
-    radial-gradient(circle at 20% 25%,#174158 0,#0b283a 40%,#071927 100%)
-
-}
-
-.river{
-
-  position:absolute;
-
-  left:50%;
-
-  top:-6%;
-
-  height:115%;
-
-  width:74px;
-
-  border-radius:48%;
-
-  background:linear-gradient(90deg,#0c68ad,#2a99df,#0b68ad);
-
-  transform:rotate(4deg);
-
-  opacity:.88
-
-}
-
-.river:after{
-
-  content:"แม่น้ำเจ้าพระยา";
-
-  position:absolute;
-
-  left:28px;
-
-  top:42%;
-
-  writing-mode:vertical-rl;
-
-  font-size:11px;
-
-  color:#e1f6ff
-
-}
-
-.city{
-
-  position:absolute;
-
-  transform:translate(-50%,-50%);
-
-  text-align:center;
-
-  z-index:3
-
-}
-
-.city button{
-
-  border:0;
-
-  background:none;
-
-  color:#fff;
-
-  font-weight:700;
-
-  font-size:12px;
-
-  padding:7px;
-
-  cursor:pointer
-
-}
-
-.pin{
-
-  display:block;
-
-  width:28px;
-
-  height:28px;
-
-  margin:auto;
-
-  border:3px solid white;
-
-  border-radius:50% 50% 50% 0;
-
-  transform:rotate(-45deg);
-
-  box-shadow:0 3px 8px #0009
-
-}
-
-.pin i{
-
-  display:block;
-
-  width:8px;
-
-  height:8px;
-
-  border-radius:50%;
-
-  background:white;
-
-  margin:7px
-
-}
-
-.green{background:#22c55e}
-
-.yellow{background:#facc15}
-
-.orange{background:#f97316}
-
-.red{background:#ef4444}
-
-.purple{background:#a855f7}
-
-#detail{
-
-  margin-top:10px;
-
-  min-height:130px;
-
-  background:#10263c;
-
-  border:1px solid #2c6288;
-
-  border-radius:15px;
-
-  padding:14px
-
-}
-
-.stationTitle{font-size:19px;font-weight:800}
-
-.big{font-size:29px;font-weight:900;margin:4px 0}
-
-.muted{font-size:12px;color:#a9cfe4}
-
-.status{
-
-  display:inline-block;
-
-  padding:4px 8px;
-
-  border-radius:15px;
-
-  font-size:11px;
-
-  margin-top:5px;
-
-  background:#203b52
-
-}
-
-.legend{
-
-  display:flex;
-
-  gap:12px;
-
-  flex-wrap:wrap;
-
-  margin:10px 2px;
-
-  font-size:12px
-
-}
-
-.dot{
-
-  display:inline-block;
-
-  width:10px;
-
-  height:10px;
-
-  border-radius:50%;
-
-  margin-right:4px
-
-}
-
-.notice{
-
-  background:#392b12;
-
-  color:#ffe09b;
-
-  border:1px solid #705623;
-
-  padding:10px;
-
-  border-radius:11px;
-
-  font-size:12px
-
-}
-
-footer{
-
-  text-align:center;
-
-  color:#779db5;
-
-  padding:18px;
-
-  font-size:11px
-
-}
-
-@media(max-width:700px){
-
-  .summary{grid-template-columns:1fr 1fr}
-
-  .map{height:510px}
-
-  h1{font-size:17px}
-
-  .city button{font-size:10px}
-
-}
-
+:root{--bg:#06121f;--panel:#0d2235;--line:#24516d;--text:#eef8ff;--muted:#9fc6d9;--blue:#2097d3;--green:#22c55e;--yellow:#facc15;--orange:#f97316;--red:#ef4444;--purple:#a855f7}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#06121f,#081a2b);color:var(--text);font-family:system-ui,-apple-system,"Noto Sans Thai",sans-serif}
+header{position:sticky;top:0;z-index:20;padding:13px 16px;background:#08243aee;backdrop-filter:blur(10px);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:12px}
+h1{font-size:20px;margin:0}.sub,.muted{color:var(--muted);font-size:12px}.badge{display:inline-block;padding:4px 9px;border-radius:999px;font-size:11px;font-weight:800}.live{background:#0b6b43}.delayed{background:#7a5710}.stale{background:#7f1d1d}.wrap{max-width:1180px;margin:auto;padding:12px}
+.hero{display:grid;grid-template-columns:1.2fr .8fr;gap:10px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:13px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}.card{background:#102a40;border:1px solid #23536f;border-radius:13px;padding:10px}.card b{display:block;font-size:20px;margin-top:3px}.card small{color:var(--muted)}
+.map{height:530px;position:relative;overflow:hidden;border-radius:18px;background:radial-gradient(circle at 20% 20%,#18475f,#0c2b3d 45%,#071927);border:1px solid var(--line)}
+.river{position:absolute;left:50%;top:-7%;height:116%;width:72px;border-radius:48%;background:linear-gradient(90deg,#0e67a7,#2da6ee,#0f68aa);transform:rotate(4deg);opacity:.9}.river:after{content:"แม่น้ำเจ้าพระยา";position:absolute;left:28px;top:41%;writing-mode:vertical-rl;font-size:11px}
+.city{position:absolute;transform:translate(-50%,-50%);z-index:3;text-align:center}.city button{border:0;background:none;color:white;font-weight:800;font-size:11px;cursor:pointer}.pin{display:block;width:28px;height:28px;border:3px solid white;border-radius:50% 50% 50% 0;transform:rotate(-45deg);margin:auto;box-shadow:0 3px 8px #0008}.pin i{display:block;width:8px;height:8px;background:white;border-radius:50%;margin:7px}.green{background:var(--green)}.yellow{background:var(--yellow)}.orange{background:var(--orange)}.red{background:var(--red)}.purple{background:var(--purple)}
+#detail{min-height:150px}.title{font-size:18px;font-weight:900}.big{font-size:30px;font-weight:900;margin:5px 0}.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;margin:10px 2px}.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px}.notice{font-size:12px;background:#34270f;border:1px solid #70551f;color:#ffe09b;border-radius:12px;padding:10px}.source a{color:#82d5ff}.iframeWrap{margin-top:10px;overflow:hidden;border-radius:15px;border:1px solid var(--line);background:white}.iframeWrap iframe{width:100%;height:560px;border:0}.toolbar{display:flex;gap:8px;flex-wrap:wrap}.btn{display:inline-block;padding:9px 12px;border-radius:10px;background:#12618a;color:white;text-decoration:none;font-size:12px;font-weight:800}.btn.alt{background:#1f3b51}.statusline{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:5px}
+footer{text-align:center;color:#6f99ae;padding:18px;font-size:11px}
+@media(max-width:760px){.hero{grid-template-columns:1fr}.grid{grid-template-columns:1fr 1fr}.map{height:500px}.iframeWrap iframe{height:480px}h1{font-size:17px}}
 </style>
-
 </head>
-
 <body>
-
 <header>
-
-  <div>
-
-    <h1>TTM FLOOD LIVE <span class="live">ART TTM</span></h1>
-
-    <div class="sub">ศูนย์ติดตามสถานการณ์น้ำลุ่มเจ้าพระยา</div>
-
-  </div>
-
-  <div id="clock"></div>
-
+  <div><h1>TTM FLOOD LIVE <span class="badge live">Art TTM</span></h1><div class="sub">ติดตามสถานการณ์น้ำลุ่มเจ้าพระยา • ข้อมูลทางการ + ผัง Real-Time</div></div>
+  <div style="text-align:right"><div id="clock" style="font-size:12px"></div><div id="age" class="sub">กำลังโหลดข้อมูล…</div></div>
 </header>
 
 <div class="wrap">
-
-<div class="summary">
-
-  <div class="card">
-
-    <small>C.2 นครสวรรค์</small>
-
-    <b>2,026 m³/s</b>
-
+  <div class="hero">
+    <div class="panel">
+      <div class="title">สถานะข้อมูล TTM</div>
+      <div class="statusline"><span id="freshBadge" class="badge stale">กำลังตรวจสอบ</span><span id="measured" class="muted"></span></div>
+      <div class="grid" id="summary"></div>
+      <div class="notice"><b>หลักการแสดงผล:</b> TTM จะไม่เปลี่ยนเวลาข้อมูลต้นทางให้เป็นเวลาปัจจุบัน หากข้อมูลรายงานเก่ากว่าเกณฑ์ ระบบจะแสดง DELAYED/STALE โดยอัตโนมัติ</div>
+    </div>
+    <div class="panel source">
+      <div class="title">แหล่งข้อมูลทางการ</div>
+      <p class="muted">ข้อมูลการไหล/ระดับน้ำอ้างอิงรายงานกรมชลประทาน และมีทางลัดไปยังผังน้ำเพื่อการจัดการแบบ Real-Time ของศูนย์ปฏิบัติการน้ำอัจฉริยะ</p>
+      <div class="toolbar">
+        <a class="btn" href="https://hyd-app.rid.go.th/SVG/flow_diagram.html?svg=hydro5_636674419028767130" target="_blank" rel="noopener">เปิดผัง Real-Time RID</a>
+        <a class="btn alt" id="reportLink" href="https://www.rid.go.th/th/water-situation/28926" target="_blank" rel="noopener">เปิดรายงานล่าสุดที่ตรวจสอบ</a>
+      </div>
+      <p class="muted" style="margin-bottom:0">หน้าเว็บจะอ่าน <b>data.json</b> ซ้ำทุก 5 นาที เมื่อ Art TTM อัปเดตข้อมูล หน้าเว็บจะเปลี่ยนค่าโดยไม่ต้องแก้โค้ดหน้าหลัก</p>
+    </div>
   </div>
 
-  <div class="card">
-
-    <small>C.13 เจ้าพระยา</small>
-
-    <b>2,200 m³/s</b>
-
+  <div class="panel" style="margin-top:10px">
+    <div class="title">แผนผังสถานี — แตะหมุดเพื่อดูรายละเอียด</div>
+    <div class="map">
+      <div class="river"></div>
+      <div class="city" style="left:43%;top:9%"><button data-id="c2"><span class="pin orange"><i></i></span>C.2 นครสวรรค์</button></div>
+      <div class="city" style="left:48%;top:23%"><button data-id="c13"><span class="pin red"><i></i></span>C.13 ชัยนาท</button></div>
+      <div class="city" style="left:52%;top:36%"><button data-id="sing"><span class="pin orange"><i></i></span>สิงห์บุรี</button></div>
+      <div class="city" style="left:55%;top:48%"><button data-id="ang"><span class="pin orange"><i></i></span>อ่างทอง</button></div>
+      <div class="city" style="left:58%;top:61%"><button data-id="c29"><span class="pin red"><i></i></span>C.29 อยุธยา</button></div>
+      <div class="city" style="left:61%;top:73%"><button data-id="pathum"><span class="pin yellow"><i></i></span>ปทุมธานี</button></div>
+      <div class="city" style="left:64%;top:84%"><button data-id="non"><span class="pin yellow"><i></i></span>นนทบุรี</button></div>
+      <div class="city" style="left:67%;top:94%"><button data-id="bkk"><span class="pin green"><i></i></span>กรุงเทพฯ</button></div>
+    </div>
+    <div id="detail" class="panel" style="margin-top:10px"><div class="title">เลือกสถานีบนแผนผัง</div><div class="muted">จะแสดงค่าตรวจวัด เวลาอ้างอิง แหล่งข้อมูล และสถานะความสดของข้อมูล</div></div>
+    <div class="legend"><span><i class="dot green"></i>ปกติ</span><span><i class="dot yellow"></i>เฝ้าระวัง</span><span><i class="dot orange"></i>น้ำมาก</span><span><i class="dot red"></i>เสี่ยงสูง</span><span><i class="dot purple"></i>วิกฤต</span></div>
   </div>
 
-  <div class="card">
-
-    <small>C.29 บางไทร</small>
-
-    <b>2,071 m³/s</b>
-
+  <div class="panel" style="margin-top:10px">
+    <div class="title">ผังน้ำเพื่อการจัดการ — Real-Time กรมชลประทาน</div>
+    <div class="muted">ส่วนนี้เป็นหน้าของกรมชลประทานโดยตรง หากเบราว์เซอร์ไม่อนุญาตการฝังหน้า ให้ใช้ปุ่ม “เปิดผัง Real-Time RID” ด้านบน</div>
+    <div class="iframeWrap"><iframe loading="lazy" src="https://hyd-app.rid.go.th/SVG/flow_diagram.html?svg=hydro5_636674419028767130" title="RID Real-Time Flow Diagram"></iframe></div>
   </div>
-
-  <div class="card">
-
-    <small>ข้อมูลอ้างอิง</small>
-
-    <b>30 ก.ย. 2569</b>
-
-  </div>
-
 </div>
-
-<div class="map">
-
-<div class="river"></div>
-
-<div class="city" style="left:43%;top:9%">
-
-<button data-id="c2">
-
-<span class="pin orange"><i></i></span>
-
-C.2 นครสวรรค์
-
-</button>
-
-</div>
-
-<div class="city" style="left:48%;top:23%">
-
-<button data-id="c13">
-
-<span class="pin red"><i></i></span>
-
-C.13 ชัยนาท
-
-</button>
-
-</div>
-
-<div class="city" style="left:52%;top:36%">
-
-<button data-id="sing">
-
-<span class="pin orange"><i></i></span>
-
-สิงห์บุรี
-
-</button>
-
-</div>
-
-<div class="city" style="left:55%;top:48%">
-
-<button data-id="ang">
-
-<span class="pin orange"><i></i></span>
-
-อ่างทอง
-
-</button>
-
-</div>
-
-<div class="city" style="left:58%;top:61%">
-
-<button data-id="c29">
-
-<span class="pin red"><i></i></span>
-
-C.29 อยุธยา
-
-</button>
-
-</div>
-
-<div class="city" style="left:61%;top:73%">
-
-<button data-id="pathum">
-
-<span class="pin yellow"><i></i></span>
-
-ปทุมธานี
-
-</button>
-
-</div>
-
-<div class="city" style="left:64%;top:84%">
-
-<button data-id="non">
-
-<span class="pin yellow"><i></i></span>
-
-นนทบุรี
-
-</button>
-
-</div>
-
-<div class="city" style="left:67%;top:94%">
-
-<button data-id="bkk">
-
-<span class="pin green"><i></i></span>
-
-กรุงเทพฯ
-
-</button>
-
-</div>
-
-</div>
-
-<div id="detail">
-
-  <div class="stationTitle">แตะหมุดบนแผนผัง</div>
-
-  <div class="muted">
-
-    เพื่อดูระดับน้ำ อัตราการไหล เวลาอ้างอิง และสถานะของแต่ละพื้นที่
-
-  </div>
-
-</div>
-
-<div class="legend">
-
-<span><i class="dot green"></i>ปกติ</span>
-
-<span><i class="dot yellow"></i>เฝ้าระวัง</span>
-
-<span><i class="dot orange"></i>น้ำมาก</span>
-
-<span><i class="dot red"></i>เสี่ยงสูง</span>
-
-<span><i class="dot purple"></i>วิกฤต</span>
-
-</div>
-
-<div class="notice">
-
-<b>ระบบ Art TTM:</b>
-
-เวลาที่มุมขวาบนคือเวลาปัจจุบันของผู้ใช้งาน ส่วนข้อมูลสถานีจะแสดง
-
-“เวลาตรวจวัดของข้อมูลต้นทาง” แยกต่างหาก
-
-เพื่อไม่ให้ข้อมูลเก่าถูกแสดงเสมือนเป็นข้อมูล Real-Time
-
-</div>
-
-</div>
-
-<footer>
-
-TTM HOME DESIGN & BUILD-IN CO., LTD. • Flood Monitoring by Art TTM
-
-</footer>
+<footer>TTM HOME DESIGN & BUILD-IN CO., LTD. • Flood Monitoring by Art TTM</footer>
 
 <script>
-
-const stations = {
-
-c2:{
-
- name:"C.2 อ.เมือง จ.นครสวรรค์",
-
- value:"2,026 m³/s",
-
- time:"30 ก.ย. 2569 เวลา 08:00 น.",
-
- note:"อัตราการไหลวันก่อน 2,038 m³/s",
-
- state:"น้ำมาก"
-
-},
-
-c13:{
-
- name:"C.13 เขื่อนเจ้าพระยา จ.ชัยนาท",
-
- value:"2,200 m³/s",
-
- time:"30 ก.ย. 2569 เวลา 08:00 น.",
-
- note:"เหนือเขื่อน +17.69 ม.รทก. • ท้ายเขื่อน +15.22 ม.รทก.",
-
- state:"เสี่ยงสูง"
-
-},
-
-sing:{
-
- name:"จังหวัดสิงห์บุรี",
-
- value:"เฝ้าระวัง",
-
- time:"ติดตามผลจากการระบายท้ายเขื่อนเจ้าพระยา",
-
- note:"รอเชื่อมข้อมูลสถานีตรวจวัดโดยตรง",
-
- state:"น้ำมาก"
-
-},
-
-ang:{
-
- name:"จังหวัดอ่างทอง",
-
- value:"เฝ้าระวัง",
-
- time:"พื้นที่ลุ่มต่ำริมแม่น้ำเจ้าพระยา",
-
- note:"รอเชื่อมข้อมูลสถานีตรวจวัดโดยตรง",
-
- state:"น้ำมาก"
-
-},
-
-c29:{
-
- name:"C.29 บางไทร จ.พระนครศรีอยุธยา",
-
- value:"2,071 m³/s",
-
- time:"30 ก.ย. 2569 เวลา 08:00 น.",
-
- note:"อัตราการไหลวันก่อน 1,814 m³/s",
-
- state:"เสี่ยงสูง"
-
-},
-
-pathum:{
-
- name:"จังหวัดปทุมธานี",
-
- value:"เฝ้าระวัง",
-
- time:"ติดตามน้ำเจ้าพระยาตอนล่าง",
-
- note:"รอเชื่อมข้อมูลสถานีตรวจวัดโดยตรง",
-
- state:"เฝ้าระวัง"
-
-},
-
-non:{
-
- name:"จังหวัดนนทบุรี",
-
- value:"เฝ้าระวัง",
-
- time:"ติดตามน้ำเจ้าพระยาตอนล่าง",
-
- note:"รอเชื่อมข้อมูลสถานีตรวจวัดโดยตรง",
-
- state:"เฝ้าระวัง"
-
-},
-
-bkk:{
-
- name:"กรุงเทพมหานคร",
-
- value:"ติดตามสถานการณ์",
-
- time:"เจ้าพระยาตอนล่างและอิทธิพลน้ำทะเล",
-
- note:"รอเชื่อมข้อมูลสถานีตรวจวัดโดยตรง",
-
- state:"ปกติ"
-
-}
-
+let DATA=null;
+const fallback={
+ measured_at:"2026-09-30T08:00:00+07:00",
+ source_name:"กรมชลประทาน",
+ source_url:"https://www.rid.go.th/th/water-situation/28926",
+ stations:{
+  c2:{name:"C.2 อ.เมือง จ.นครสวรรค์",value:2026,unit:"m³/s",today:2026,yesterday:2038,state:"น้ำมาก",note:"อัตราการไหล"},
+  c13:{name:"เขื่อนเจ้าพระยา จ.ชัยนาท",value:2200,unit:"m³/s",today:2200,yesterday:2000,state:"เสี่ยงสูง",note:"เหนือเขื่อน +17.69 ม.รทก. • ท้ายเขื่อน +15.22 ม.รทก."},
+  c29:{name:"C.29 บางไทร จ.พระนครศรีอยุธยา",value:2071,unit:"m³/s",today:2071,yesterday:1814,state:"เสี่ยงสูง",note:"อัตราการไหล"},
+  pasak:{name:"เขื่อนป่าสักชลสิทธิ์",value:115,unit:"m³/s",today:115,yesterday:25,state:"เฝ้าระวัง",note:"ปริมาณระบาย"}
+ }
 };
-
-document.querySelectorAll("[data-id]").forEach(btn=>{
-
- btn.addEventListener("click",()=>{
-
-   const x=stations[btn.dataset.id];
-
-   document.getElementById("detail").innerHTML=
-
-   '<div class="stationTitle">'+x.name+'</div>'+
-
-   '<div class="big">'+x.value+'</div>'+
-
-   '<div>'+x.time+'</div>'+
-
-   '<div class="muted">'+x.note+'</div>'+
-
-   '<span class="status">'+x.state+'</span>'+
-
-   '<div class="muted" style="margin-top:8px">ข้อมูลแสดงผลโดย Art TTM</div>';
-
- });
-
-});
-
-function updateClock(){
-
- document.getElementById("clock").innerHTML=
-
- new Date().toLocaleString("th-TH",{
-
-   dateStyle:"medium",
-
-   timeStyle:"medium"
-
- });
-
+const area={
+ sing:{name:"จังหวัดสิงห์บุรี",value:"ติดตามท้ายเขื่อนเจ้าพระยา",state:"น้ำมาก",note:"ยังไม่มีค่ารายสถานีในชุดข้อมูล TTM"},
+ ang:{name:"จังหวัดอ่างทอง",value:"ติดตามท้ายเขื่อนเจ้าพระยา",state:"น้ำมาก",note:"ยังไม่มีค่ารายสถานีในชุดข้อมูล TTM"},
+ pathum:{name:"จังหวัดปทุมธานี",value:"ติดตามเจ้าพระยาตอนล่าง",state:"เฝ้าระวัง",note:"ยังไม่มีค่ารายสถานีในชุดข้อมูล TTM"},
+ non:{name:"จังหวัดนนทบุรี",value:"ติดตามเจ้าพระยาตอนล่าง",state:"เฝ้าระวัง",note:"ยังไม่มีค่ารายสถานีในชุดข้อมูล TTM"},
+ bkk:{name:"กรุงเทพมหานคร",value:"ติดตามเจ้าพระยาตอนล่าง + น้ำทะเลหนุน",state:"ปกติ",note:"ยังไม่มีค่ารายสถานีในชุดข้อมูล TTM"}
+};
+function fmt(n){return Number(n).toLocaleString("th-TH")}
+function freshness(){
+ const t=new Date(DATA.measured_at); const h=(Date.now()-t.getTime())/36e5;
+ const b=document.getElementById("freshBadge");
+ let label,cls;
+ if(h<=1.5){label="LIVE";cls="live"}else if(h<=6){label="DELAYED";cls="delayed"}else{label="STALE";cls="stale"}
+ b.className="badge "+cls;b.textContent=label;
+ document.getElementById("age").textContent="อายุข้อมูลประมาณ "+Math.max(0,h).toFixed(1)+" ชม.";
+ document.getElementById("measured").textContent="เวลาต้นทาง: "+t.toLocaleString("th-TH",{dateStyle:"medium",timeStyle:"short"});
 }
-
-updateClock();
-
-setInterval(updateClock,1000);
-
+function renderSummary(){
+ const ids=["c2","c13","c29","pasak"]; const box=document.getElementById("summary");box.innerHTML="";
+ ids.forEach(id=>{const s=DATA.stations[id];const d=document.createElement("div");d.className="card";d.innerHTML="<small>"+s.name+"</small><b>"+fmt(s.value)+" "+s.unit+"</b><small>"+s.note+"</small>";box.appendChild(d)});
+ document.getElementById("reportLink").href=DATA.source_url||fallback.source_url;
+}
+function show(id){
+ const s=(DATA.stations&&DATA.stations[id])||area[id]; if(!s)return;
+ let val=typeof s.value==="number"?fmt(s.value)+" "+(s.unit||""):s.value;
+ let extra=s.yesterday!=null?"วันนี้ "+fmt(s.today)+" • เมื่อวาน "+fmt(s.yesterday)+" "+s.unit:"";
+ document.getElementById("detail").innerHTML='<div class="title">'+s.name+'</div><div class="big">'+val+'</div><div>'+extra+'</div><div class="muted">'+(s.note||"")+'</div><div class="muted" style="margin-top:7px">สถานะ Art TTM: '+(s.state||"ติดตาม")+' • เวลาต้นทาง '+new Date(DATA.measured_at).toLocaleString("th-TH")+'</div><div class="source" style="margin-top:6px"><a href="'+DATA.source_url+'" target="_blank" rel="noopener">เปิดแหล่งข้อมูลทางการ</a></div>';
+}
+async function loadData(){
+ try{const r=await fetch("data.json?ts="+Date.now(),{cache:"no-store"}); if(!r.ok)throw new Error(); DATA=await r.json()}catch(e){DATA=fallback}
+ renderSummary();freshness();
+}
+document.querySelectorAll("[data-id]").forEach(b=>b.addEventListener("click",()=>show(b.dataset.id)));
+function clock(){document.getElementById("clock").textContent=new Date().toLocaleString("th-TH",{dateStyle:"medium",timeStyle:"medium"})}
+clock();setInterval(clock,1000);loadData();setInterval(loadData,300000);
 </script>
-
-</body>
-
-</html>
+</body></html>
