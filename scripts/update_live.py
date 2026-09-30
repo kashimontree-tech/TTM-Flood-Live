@@ -1,4 +1,4 @@
-import json, urllib.request
+import json, urllib.request, datetime
 
 URL="https://api-v3.thaiwater.net/api/v1/thaiwater30/public/waterlevel_load"
 req=urllib.request.Request(URL,headers={"Accept":"application/json","User-Agent":"Mozilla/5.0"})
@@ -38,7 +38,8 @@ for row in rows:
     if old is None or lv>old["situation_level"] or (lv==old["situation_level"] and dt>old["datetime"]):
         provinces[p]=rec
 
-out={"source":"ThaiWater / National Hydroinformatics Data Center","source_url":URL,
+now=datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=7))).isoformat(timespec="seconds")
+out={"source":"ThaiWater / National Hydroinformatics Data Center","source_url":URL,"fetched_at":now,
      "source_updated_at":latest,"province_count":len(provinces),"station_count":len(rows),"provinces":provinces}
 with open("live-water.json","w",encoding="utf-8") as f:
     json.dump(out,f,ensure_ascii=False,separators=(",",":"))
