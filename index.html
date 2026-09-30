@@ -14,8 +14,16 @@ h1{font-size:20px;margin:0}.sub,.muted{color:var(--muted);font-size:12px}.badge{
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}.card{background:#102a40;border:1px solid #23536f;border-radius:13px;padding:10px}.card b{display:block;font-size:20px;margin-top:3px}.card small{color:var(--muted)}
 .map{height:530px;position:relative;overflow:hidden;border-radius:18px;background:radial-gradient(circle at 20% 20%,#18475f,#0c2b3d 45%,#071927);border:1px solid var(--line)}
 .river{position:absolute;left:50%;top:-7%;height:116%;width:72px;border-radius:48%;background:linear-gradient(90deg,#0e67a7,#2da6ee,#0f68aa);transform:rotate(4deg);opacity:.9}.river:after{content:"แม่น้ำเจ้าพระยา";position:absolute;left:28px;top:41%;writing-mode:vertical-rl;font-size:11px}
-.city{position:absolute;transform:translate(-50%,-50%);z-index:3;text-align:center}.city button{border:0;background:none;color:white;font-weight:800;font-size:11px;cursor:pointer}.pin{display:block;width:28px;height:28px;border:3px solid white;border-radius:50% 50% 50% 0;transform:rotate(-45deg);margin:auto;box-shadow:0 3px 8px #0008}.pin i{display:block;width:8px;height:8px;background:white;border-radius:50%;margin:7px}.green{background:var(--green)}.yellow{background:var(--yellow)}.orange{background:var(--orange)}.red{background:var(--red)}.purple{background:var(--purple)}
+.city{position:absolute;transform:translate(-50%,-50%);z-index:3;text-align:center}.city button{border:0;background:none;color:white;font-weight:800;font-size:11px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;padding:8px}.city button:active{transform:scale(.96)}.pin{display:block;width:28px;height:28px;border:3px solid white;border-radius:50% 50% 50% 0;transform:rotate(-45deg);margin:auto;box-shadow:0 3px 8px #0008}.pin i{display:block;width:8px;height:8px;background:white;border-radius:50%;margin:7px}.green{background:var(--green)}.yellow{background:var(--yellow)}.orange{background:var(--orange)}.red{background:var(--red)}.purple{background:var(--purple)}
 #detail{min-height:150px}.title{font-size:18px;font-weight:900}.big{font-size:30px;font-weight:900;margin:5px 0}.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;margin:10px 2px}.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px}.notice{font-size:12px;background:#34270f;border:1px solid #70551f;color:#ffe09b;border-radius:12px;padding:10px}.source a{color:#82d5ff}.iframeWrap{margin-top:10px;overflow:hidden;border-radius:15px;border:1px solid var(--line);background:white}.iframeWrap iframe{width:100%;height:560px;border:0}.toolbar{display:flex;gap:8px;flex-wrap:wrap}.btn{display:inline-block;padding:9px 12px;border-radius:10px;background:#12618a;color:white;text-decoration:none;font-size:12px;font-weight:800}.btn.alt{background:#1f3b51}.statusline{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:5px}
+.stationModal{position:fixed;inset:0;z-index:999;display:none;align-items:flex-end;justify-content:center;background:#0008;padding:14px}
+.stationModal.open{display:flex}
+.modalCard{width:min(720px,100%);background:#0d2235;border:1px solid #3a6f8e;border-radius:20px;padding:16px;box-shadow:0 20px 60px #000a}
+.modalHead{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.closeBtn{border:0;background:#1f3b51;color:white;border-radius:999px;width:38px;height:38px;font-size:22px;cursor:pointer}
+.modalBig{font-size:32px;font-weight:900;margin:8px 0}
+.modalMeta{font-size:13px;color:#a9cfe0;line-height:1.55}
+.modalLink{display:inline-block;margin-top:12px;padding:10px 13px;border-radius:10px;background:#12618a;color:#fff;text-decoration:none;font-weight:800;font-size:12px}
 footer{text-align:center;color:#6f99ae;padding:18px;font-size:11px}
 @media(max-width:760px){.hero{grid-template-columns:1fr}.grid{grid-template-columns:1fr 1fr}.map{height:500px}.iframeWrap iframe{height:480px}h1{font-size:17px}}
 </style>
@@ -68,6 +76,19 @@ footer{text-align:center;color:#6f99ae;padding:18px;font-size:11px}
     <div class="iframeWrap"><iframe loading="lazy" src="https://hyd-app.rid.go.th/SVG/flow_diagram.html?svg=hydro5_636674419028767130" title="RID Real-Time Flow Diagram"></iframe></div>
   </div>
 </div>
+<div id="stationModal" class="stationModal" aria-hidden="true">
+  <div class="modalCard" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modalHead">
+      <div>
+        <div id="modalTitle" class="title">ข้อมูลสถานี</div>
+        <div id="modalValue" class="modalBig">—</div>
+      </div>
+      <button id="closeModal" class="closeBtn" aria-label="ปิด">×</button>
+    </div>
+    <div id="modalMeta" class="modalMeta"></div>
+    <a id="modalSource" class="modalLink" href="#" target="_blank" rel="noopener">เปิดแหล่งข้อมูลทางการ</a>
+  </div>
+</div>
 <footer>TTM HOME DESIGN & BUILD-IN CO., LTD. • Flood Monitoring by Art TTM</footer>
 
 <script>
@@ -109,13 +130,24 @@ function show(id){
  const s=(DATA.stations&&DATA.stations[id])||area[id]; if(!s)return;
  let val=typeof s.value==="number"?fmt(s.value)+" "+(s.unit||""):s.value;
  let extra=s.yesterday!=null?"วันนี้ "+fmt(s.today)+" • เมื่อวาน "+fmt(s.yesterday)+" "+s.unit:"";
- document.getElementById("detail").innerHTML='<div class="title">'+s.name+'</div><div class="big">'+val+'</div><div>'+extra+'</div><div class="muted">'+(s.note||"")+'</div><div class="muted" style="margin-top:7px">สถานะ Art TTM: '+(s.state||"ติดตาม")+' • เวลาต้นทาง '+new Date(DATA.measured_at).toLocaleString("th-TH")+'</div><div class="source" style="margin-top:6px"><a href="'+DATA.source_url+'" target="_blank" rel="noopener">เปิดแหล่งข้อมูลทางการ</a></div>';
+ const measured=new Date(DATA.measured_at).toLocaleString("th-TH");
+ document.getElementById("detail").innerHTML='<div class="title">'+s.name+'</div><div class="big">'+val+'</div><div>'+extra+'</div><div class="muted">'+(s.note||"")+'</div><div class="muted" style="margin-top:7px">สถานะ Art TTM: '+(s.state||"ติดตาม")+' • เวลาต้นทาง '+measured+'</div>';
+ document.getElementById("modalTitle").textContent=s.name;
+ document.getElementById("modalValue").textContent=val;
+ document.getElementById("modalMeta").innerHTML=(extra?extra+"<br>":"")+(s.note||"")+"<br>สถานะ Art TTM: "+(s.state||"ติดตาม")+"<br>เวลาต้นทาง: "+measured;
+ document.getElementById("modalSource").href=DATA.source_url||fallback.source_url;
+ const m=document.getElementById("stationModal"); m.classList.add("open"); m.setAttribute("aria-hidden","false");
 }
 async function loadData(){
  try{const r=await fetch("data.json?ts="+Date.now(),{cache:"no-store"}); if(!r.ok)throw new Error(); DATA=await r.json()}catch(e){DATA=fallback}
  renderSummary();freshness();
 }
-document.querySelectorAll("[data-id]").forEach(b=>b.addEventListener("click",()=>show(b.dataset.id)));
+document.querySelectorAll("[data-id]").forEach(b=>{
+ b.addEventListener("click",(e)=>{e.preventDefault();e.stopPropagation();show(b.dataset.id)});
+ b.addEventListener("touchend",(e)=>{e.preventDefault();show(b.dataset.id)},{passive:false});
+});
+document.getElementById("closeModal").addEventListener("click",()=>{const m=document.getElementById("stationModal");m.classList.remove("open");m.setAttribute("aria-hidden","true")});
+document.getElementById("stationModal").addEventListener("click",(e)=>{if(e.target.id==="stationModal"){e.currentTarget.classList.remove("open");e.currentTarget.setAttribute("aria-hidden","true")}});
 function clock(){document.getElementById("clock").textContent=new Date().toLocaleString("th-TH",{dateStyle:"medium",timeStyle:"medium"})}
 clock();setInterval(clock,1000);loadData();setInterval(loadData,300000);
 </script>
